@@ -1,0 +1,99 @@
+services:
+  frontend:
+    container_name: ${APP_NAME}_frontend
+    build:
+      context: ./docker/frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+      - db
+    volumes:
+      - ../frontend:/var/www/html:rw
+    working_dir: /var/www/html
+    networks:
+      - network
+    ports:
+      - "3000:3000"
+    restart: always
+    command: "npm run dev"
+
+  backend:
+    container_name: ${APP_NAME}_backend
+    build:
+      context: ./docker/backend
+      dockerfile: Dockerfile
+      args:
+        - UID=${DOCKER_UID}
+        - USERNAME=${DOCKER_USER}
+        - GID=${DOCKER_GID}
+        - GROUP=${DOCKER_GROUP}
+    user: patrycjusz
+    environment:
+      - PATH=$PATH:/var/www/html/bin
+    depends_on:
+      - db
+    volumes:
+      - ./docker/backend/php.ini:/usr/local/etc/php/php.ini
+      - ../backend:/var/www/html:rw
+    working_dir: /var/www/html
+    networks:
+      - network
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: always
+    command: php-fpm
+
+  db:
+    container_name: ${APP_NAME}_db
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${APP_NAME}
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - network
+    restart: always
+
+  nginx:
+    container_name: ${APP_NAME}_nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - network
+    restart: always
+
+  phpmyadmin:
+    container_name: ${APP_NAME}_pma
+    image: phpmyadmin:latest
+    environment:
+      - PMA_HOSTS=db
+      - PMA_DATABASE=${APP_NAME}
+      - PMA_USER=user
+      - PMA_PASSWORD=password
+      - PMA_ROOT_PASSWORD=password
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - network
+    restart: always
+
+volumes:
+  db_data:
+
+networks:
+  network:
+    driver: bridge
