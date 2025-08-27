@@ -4,9 +4,15 @@ services:
     build:
       context: ./docker/frontend
       dockerfile: Dockerfile
+      args:
+        - UID=${DOCKER_UID}
+        - USERNAME=${DOCKER_USER}
+        - GID=${DOCKER_GID}
+        - GROUP=${DOCKER_GROUP}
     depends_on:
       - backend
       - db
+    user: ${DOCKER_UID:-1000}:${DOCKER_GID:-1000}
     volumes:
       - ../frontend:/var/www/html:rw
     working_dir: /var/www/html
@@ -27,7 +33,7 @@ services:
         - USERNAME=${DOCKER_USER}
         - GID=${DOCKER_GID}
         - GROUP=${DOCKER_GROUP}
-    user: patrycjusz
+    user: ${DOCKER_UID:-1000}:${DOCKER_GID:-1000}
     environment:
       - PATH=$PATH:/var/www/html/bin
     depends_on:

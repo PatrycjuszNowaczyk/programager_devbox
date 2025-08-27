@@ -46,10 +46,11 @@ ARG UID=1000
 ARG GID=1000
 
 # Create the non-root user and group
-RUN groupadd -g ${GID} ${GROUP} && useradd -u ${UID} -g ${GROUP} -m ${USERNAME}
+RUN groupadd -g ${GID} ${GROUP}
+RUN useradd -u ${UID} -g ${GROUP} -m ${USERNAME}
 
 # Set the ownership of the /var/www directory to the non-root user
-RUN chown -R $USERNAME:$USERNAME /var/www
+RUN chown -R ${UID}:${GID} /var/www
 
 # Switch to the non-root user
-USER $USERNAME
+USER ${UID}
