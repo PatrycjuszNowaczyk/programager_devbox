@@ -57,7 +57,7 @@ install: install-frontend install-backend up
 
 # Start containers
 up: check-all
-	$(COMPOSE) up --build
+	$(COMPOSE) up -d --build
 
 # Stop containers
 down: check-all
