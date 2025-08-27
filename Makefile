@@ -2,6 +2,7 @@
 COMPOSE=docker compose
 FRONTEND_CONTAINER=frontend
 BACKEND_CONTAINER=backend
+DB_CONTAINER=db
 
 FRONTEND_DIR=../frontend
 BACKEND_DIR=../backend
@@ -65,3 +66,26 @@ down: check-all
 
 # Rebuild containers and reinstall dependencies
 rebuild: check-all down up install
+
+# Ensure containers are up before opening a shell
+ensure-up:
+	@if [ -z "$$($(COMPOSE) ps -q)" ]; then \
+		echo "Error: project is not running. Start it with 'make up'."; \
+		exit 1; \
+	fi
+
+# Open an interactive shell in the backend container
+shell-backend: ensure-up
+	@echo "Opening shell in $(BACKEND_CONTAINER)..."
+	@$(COMPOSE) exec $(BACKEND_CONTAINER) bash || $(COMPOSE) exec $(BACKEND_CONTAINER) sh
+
+# Open an interactive shell in the frontend container
+shell-frontend: ensure-up
+	@echo "Opening shell in $(FRONTEND_CONTAINER)..."
+	@$(COMPOSE) exec $(FRONTEND_CONTAINER) bash || $(COMPOSE) exec $(FRONTEND_CONTAINER) sh
+
+# Open an interactive shell in the database container
+shell-db: ensure-up
+	@echo "Opening shell in $(DB_CONTAINER)..."
+	@$(COMPOSE) exec $(DB_CONTAINER) bash || $(COMPOSE) exec $(DB_CONTAINER) sh
+
