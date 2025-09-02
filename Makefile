@@ -1,14 +1,29 @@
+.PHONY: help
+
 # Variables
 COMPOSE=docker compose
 FRONTEND_CONTAINER=frontend
 BACKEND_CONTAINER=backend
 DB_CONTAINER=db
 
+help:
+	@echo "Available commands:"
+	@echo "  up              	- Start containers"
+	@echo "  down            	- Stop containers"
+	@echo "  install         	- Install all dependencies"
+	@echo "  rebuild         	- Rebuild containers and reinstall dependencies"
+	@echo "  shell-frontend  	- Open shell in frontend container"
+	@echo "  shell-backend   	- Open shell in backend container"
+	@echo "  shell-db        	- Open shell in database container"
+	@echo "  install-frontend	- Install frontend dependencies"
+	@echo "  install-backend 	- Install backend dependencies"
+	@echo "  check-all      	- Check if frontend and backend repositories exist"
+
 FRONTEND_DIR=../frontend
 BACKEND_DIR=../backend
 
 # Default target
-.DEFAULT_GOAL := up
+.DEFAULT_GOAL := help
 
 # Function to check if directory exists and is a git repo
 # --- Repo check function ---
