@@ -19,8 +19,8 @@ help:
 	@echo "  install-backend 	- Install backend dependencies"
 	@echo "  check-all      	- Check if frontend and backend repositories exist"
 
-FRONTEND_DIR=../frontend
-BACKEND_DIR=../backend
+FRONTEND_DIR=../programager_frontend
+BACKEND_DIR=../programager_backend
 
 # Default target
 .DEFAULT_GOAL := help
