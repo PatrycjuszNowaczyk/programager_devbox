@@ -14,7 +14,7 @@ services:
       - db
     user: ${DOCKER_UID:-1000}:${DOCKER_GID:-1000}
     volumes:
-      - ../frontend:/var/www/html:rw
+      - ../programager_frontend:/var/www/html:rw
     working_dir: /var/www/html
     networks:
       - network
@@ -40,7 +40,7 @@ services:
       - db
     volumes:
       - ./docker/backend/php.ini:/usr/local/etc/php/php.ini
-      - ../backend:/var/www/html:rw
+      - ../programager_backend:/var/www/html:rw
     working_dir: /var/www/html
     networks:
       - network
